@@ -31,14 +31,14 @@ or realistic object with true proportions, reduced to few polygons and few colou
   trim, bolts, grilles). Paint it into the texture instead.
 - Triangle budget scales with prominence, not a fixed target:
 
-  | Asset class | Triangles |
-  |---|---|
-  | Small prop (bin, sign, hydrant) | 12-150 |
-  | Large prop / vehicle | 300-1,500 |
-  | Infill / minor building | 10-200 |
-  | Typical building | 200-2,000 |
+  | Asset class                          | Triangles    |
+  |--------------------------------------|--------------|
+  | Small prop (bin, sign, hydrant)      | 12-150       |
+  | Large prop / vehicle                 | 300-1,500    |
+  | Infill / minor building              | 10-200       |
+  | Typical building                     | 200-2,000    |
   | Skyline landmark (seen near and far) | 5,000-40,000 |
-  | Character | 1,000-3,000 |
+  | Character                            | 1,000-3,000  |
 
 - Prefer flat faces and hard edges. Use few curve segments: 6-8 sides for
   round columns, poles and trunks; 8-12 for large curves.
