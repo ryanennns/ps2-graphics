@@ -7,8 +7,8 @@ For instance, if I was Opus 5.5 designing a truck model, I would save my output 
 
 ```
 models
---> claude
-------> truck
+--> truck
+------> claude
 ----------> previews
 --------------> asdf.png
 ----------> textures
@@ -16,6 +16,9 @@ models
 ----------> all_python_scripts_here.py
 ----------> truck.blend
 ```
+
+models > particular_model > ai_model
+
 ## Python files in a model directory
 
 A model directory contains exactly these four Python files and no others:

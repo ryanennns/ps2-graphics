@@ -30,7 +30,7 @@ Each model script puts the repo root on `sys.path` and imports from `_lib`:
 ```python
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))   # models/<family>/<asset>/ -> repo root
+REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))   # models/<asset>/<family>/ -> repo root
 if REPO not in sys.path:
     sys.path.insert(0, REPO)
 ```
@@ -110,10 +110,10 @@ It exits 0 on pass and 1 on any failure.
 
 ```sh
 B=/Applications/Blender.app/Contents/MacOS/Blender
-$B -b --python models/<family>/<asset>/build.py
-$B -b models/<family>/<asset>/<asset>.blend --python models/<family>/<asset>/validate.py
-$B -b models/<family>/<asset>/<asset>.blend --python models/<family>/<asset>/render_previews.py [-- Cam_Name ...]
-$B models/<family>/<asset>/<asset>.blend --python _lib/view.py -- Cam_A Cam_B      # GUI viewer
+$B -b --python models/<asset>/<family>/build.py
+$B -b models/<asset>/<family>/<asset>.blend --python models/<asset>/<family>/validate.py
+$B -b models/<asset>/<family>/<asset>.blend --python models/<asset>/<family>/render_previews.py [-- Cam_Name ...]
+$B models/<asset>/<family>/<asset>.blend --python _lib/view.py -- Cam_A Cam_B      # GUI viewer
 ```
 
-Reference implementation: `models/claude/gas_station/`.
+Reference implementation: `models/gas_station/claude/`.
