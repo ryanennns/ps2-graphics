@@ -51,13 +51,14 @@ usage, not just its last response, using exactly these five fields:
 }
 ```
 
-| Field | What to put there |
-|-------|-------------------|
-| `model` | AI model name matching the model directory name, not the asset name. |
-| `input` | The session's recorded `tokens.input` counter. |
-| `output` | The session's recorded `tokens.output` counter; do not add the separate reasoning counter. |
-| `cached_input` | The session's recorded `tokens.cache.read` counter: cached input tokens, not the number of cache-hit requests. |
-| `spend` | The session's recorded API cost in USD, or the calculated API-equivalent cost for subscription usage (see below), as a number without a currency symbol. |
+| Field          | What to put there                                                                                                                                        |
+|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `model`        | AI model name matching the model directory name, not the asset name.                                                                                     |
+| `effort`       | The effort setting applied when running the task.                                                                                                        |
+| `input`        | The session's recorded `tokens.input` counter.                                                                                                           |
+| `output`       | The session's recorded `tokens.output` counter; do not add the separate reasoning counter.                                                               |
+| `cached_input` | The session's recorded `tokens.cache.read` counter: cached input tokens, not the number of cache-hit requests.                                           |
+| `spend`        | The session's recorded API cost in USD, or the calculated API-equivalent cost for subscription usage (see below), as a number without a currency symbol. |
 
 For OpenCode, retrieve the creation session with
 `rtk opencode api get /api/session/<sessionID>` and copy its cumulative counters
