@@ -34,3 +34,5 @@ All model code must fit one of these four roles; no helper modules, scratch scri
 debug files. Shared code belongs in the repo-root `_lib/` and is imported from there, not copied.
 Do not modify `_lib/` unless explicitly asked; see `_docs/technical/lib.md`. Notes go in a
 `NOTES.md` next to the scripts (it's a doc, not code).
+
+When done with your model, commit your work as `${modelName}_${assetName}`

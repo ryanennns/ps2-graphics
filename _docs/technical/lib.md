@@ -14,14 +14,14 @@ Everything runs inside Blender (5.2+) with its bundled Python (`numpy` and `Open
 
 ## Modules
 
-| Module | What it gives you | Style rules it enforces |
-|---|---|---|
-| `paint.py` | `Canvas` (4× supersampled painting: `rect`, `rect_wrap`, `mul`, `text`, `text_c`, `weather`), `tile_noise`, `plain()`, `shade()`, `mix()`, `quantize()`, `save_png()`, `TextureSet` registry | §4: paint at 4× then box-filter, palette-quantize with no dither, RGB with no alpha, power-of-two sizes, correlated weathering, 5×7 bitmap font |
-| `shading.py` | The one shared sun (`SUN`, `SUN_ELEV`), `bake()`, `MaterialTable` with `W()`/`F` UV mappings, `build_materials()` | §3: baked vertex light (up 1.0, down 0.6, walls 0.76–1.0, ground ×0.84→1.0 over 2.5 m). §5: texture × `Bake` → Principled; matte unless glass/metal; four classes only |
-| `geometry.py` | `MB` mesh builder (`box`, `quad`, `prism`, `poly`, `build`), `coll()`, `reset_scene()`, `report_tris()`, `save()` | §2: flat shading, outward winding, per-face `skip` for hidden faces, world-space metres |
-| `rig.py` | `setup(asset_root, extra_cams, default_cam)`, `render(names, out_dir)`, `viewport_defaults()` | §7: same sun/sky/32 mm/900×600 for everything, 4 cardinal + 3/4 aerial (+ top above 35 m) |
-| `checks.py` | `run(asset_root, tex_dir=None, budgets, total_max)`, `exit_with(report)`, `BUDGETS` | §8 self-check (see below) |
-| `view.py` | Opens a `.blend` split into one Material Preview panel per camera | none (viewing helper) |
+| Module        | What it gives you                                                                                                                                                                            | Style rules it enforces                                                                                                                                                |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `paint.py`    | `Canvas` (4× supersampled painting: `rect`, `rect_wrap`, `mul`, `text`, `text_c`, `weather`), `tile_noise`, `plain()`, `shade()`, `mix()`, `quantize()`, `save_png()`, `TextureSet` registry | §4: paint at 4× then box-filter, palette-quantize with no dither, RGB with no alpha, power-of-two sizes, correlated weathering, 5×7 bitmap font                        |
+| `shading.py`  | The one shared sun (`SUN`, `SUN_ELEV`), `bake()`, `MaterialTable` with `W()`/`F` UV mappings, `build_materials()`                                                                            | §3: baked vertex light (up 1.0, down 0.6, walls 0.76–1.0, ground ×0.84→1.0 over 2.5 m). §5: texture × `Bake` → Principled; matte unless glass/metal; four classes only |
+| `geometry.py` | `MB` mesh builder (`box`, `quad`, `prism`, `poly`, `build`), `coll()`, `reset_scene()`, `report_tris()`, `save()`                                                                            | §2: flat shading, outward winding, per-face `skip` for hidden faces, world-space metres                                                                                |
+| `rig.py`      | `setup(asset_root, extra_cams, default_cam)`, `render(names, out_dir)`, `viewport_defaults()`                                                                                                | §7: same sun/sky/32 mm/900×600 for everything, 4 cardinal + 3/4 aerial (+ top above 35 m)                                                                              |
+| `checks.py`   | `run(asset_root, tex_dir=None, budgets, total_max)`, `exit_with(report)`, `BUDGETS`                                                                                                          | §8 self-check (see below)                                                                                                                                              |
+| `view.py`     | Opens a `.blend` split into one Material Preview panel per camera                                                                                                                            | none (viewing helper)                                                                                                                                                  |
 
 ## How a model uses it
 
