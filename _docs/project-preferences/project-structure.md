@@ -57,7 +57,7 @@ usage, not just its last response, using exactly these five fields:
 | `input` | The session's recorded `tokens.input` counter. |
 | `output` | The session's recorded `tokens.output` counter; do not add the separate reasoning counter. |
 | `cached_input` | The session's recorded `tokens.cache.read` counter: cached input tokens, not the number of cache-hit requests. |
-| `spend` | The session's recorded `cost` in USD, as a number without a currency symbol. |
+| `spend` | The session's recorded API cost in USD, or the calculated API-equivalent cost for subscription usage (see below), as a number without a currency symbol. |
 
 For OpenCode, retrieve the creation session with
 `rtk opencode api get /api/session/<sessionID>` and copy its cumulative counters
@@ -65,10 +65,54 @@ and cost into the fields above. Confirm that the session actually created this
 asset; do not use a session that only inspected, renamed or validated an existing
 model. Keep the session ID in `NOTES.md` for traceability, not as an extra JSON field.
 
-Write valid JSON with numeric token counts and spending values. Preserve the
-recorded precision and any recorded zero cost; a recorded `$0` is not proof that
-the provider billed nothing. Do not estimate missing usage or substitute zero
-for unknown values. If the creation session or required stats cannot be found,
-leave `usage.json` absent and explain that in `NOTES.md`.
+Write valid JSON with numeric token counts and spending values. Preserve recorded
+token counts and cost precision. Do not invent missing usage or substitute zero
+for unknown values. If the creation session or required token stats cannot be
+found, leave `usage.json` absent and explain that in `NOTES.md`.
+
+### Subscription usage: calculate API-equivalent spending
+
+For Claude, GPT or **any model used through a subscription**, a recorded zero or
+missing API cost does not mean the work was free. Before finishing the model,
+backfill `spend` with an API-equivalent calculation from the recorded token usage:
+
+1. **Look up the exact model's current official API pricing online.** Use the
+   applicable input, output, cache-read and cache-write rates, including cache TTL,
+   prompt-length tiers, processing speed and regional modifiers where relevant.
+   Do not substitute another model's prices or divide the subscription fee among models.
+2. **Recover the creation session's usage.** Use cumulative counters or sum unique
+   response records, never both. Claude Code can repeat the same response's usage
+   across content parts: deduplicate by response/message ID before summing. Keep
+   the JSON's recorded token counters unchanged and document their source and meaning.
+3. **Calculate all billable token categories.** For rates quoted per million tokens:
+
+   ```text
+   spend = (uncached_input × input_rate
+          + cached_input × cache_read_rate
+          + cache_writes × cache_write_rate
+          + billable_output × output_rate) / 1,000,000
+   ```
+
+   Split cache writes by TTL and requests by pricing tier when necessary, then sum
+   the results. Prompt-length thresholds apply per request, not to session totals,
+   and may count cached tokens. Include reasoning/thinking at the provider's output
+   rate exactly once: add OpenCode's separate `tokens.reasoning` for billing, but
+   do not add thinking again when Claude's `output_tokens` already includes it.
+   Cache-write and reasoning counts used in the calculation belong in `NOTES.md`,
+   not in extra JSON fields.
+4. **Write the calculated USD amount to `spend`.** Keep it numeric and retain the
+   five-field JSON format. Do not leave a zero placeholder when the calculation is
+   possible. Preserve a genuine recorded API charge rather than replacing it with
+   an estimate merely because it differs from today's list prices.
+5. **Document and verify.** In the model's `NOTES.md`, record the session ID, pricing
+   source URL and lookup date, rates, extra billable counters, formula and result.
+   Label the result an **API-equivalent estimate**, not an actual invoice or
+   subscription charge. State any assumptions or excluded/unavailable usage.
+   Recalculate to verify the JSON amount and validate the JSON before committing.
+
+If exact pricing or required billing details cannot be verified, do not fabricate
+a price. Leave an existing recorded zero unchanged, explicitly mark it as
+unresolved in `NOTES.md`, and report the blocker. If there is no recorded cost at
+all, leave `usage.json` absent until it can be calculated; unknown is not zero.
 
 When done with your model, commit your work as `${modelName}_${assetName}`
