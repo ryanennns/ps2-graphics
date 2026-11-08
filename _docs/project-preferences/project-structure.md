@@ -39,11 +39,12 @@ Do not modify `_lib/` unless explicitly asked; see `_docs/technical/lib.md`. Not
 
 Save `usage.json` alongside the model's `.blend`, scripts and `NOTES.md` at
 `models/<asset>/<ai_model>/usage.json`. Record the creation session's cumulative
-usage, not just its last response, using exactly these five fields:
+usage, not just its last response, using exactly these six fields:
 
 ```json
 {
-  "model": "gpt-6.1-sol",
+  "model": "gpt-6.1-sol", 
+  "effort": "xhigh",
   "input": 39923,
   "output": 9647,
   "cached_input": 661760,
