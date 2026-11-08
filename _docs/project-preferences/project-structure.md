@@ -8,7 +8,7 @@ For instance, if I was Opus 5.5 designing a truck model, I would save my output 
 ```
 models
 --> truck
-------> claude
+------> claude-opus-5.5
 ----------> previews
 --------------> asdf.png
 ----------> textures
