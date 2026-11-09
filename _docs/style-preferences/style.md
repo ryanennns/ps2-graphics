@@ -84,6 +84,18 @@ or realistic object with true proportions, reduced to few polygons and few colou
   warm tone around RGB (138,122,92). NEVER bright orange or yellow.
 - Give each distinct ornament (cornice, band, door, sign, clock) its own small
   texture, detailed only enough to read at final resolution.
+- **Typography: MUST NOT use or consider pixel/bitmap/Minecraft-style fonts for
+  non-digital lettering.** This includes the shared 5×7 `Canvas.text` / `text_c`
+  helper: it is not a general-purpose signage font. Use a real, era-appropriate
+  serif, sans-serif, script, or sign-painter typeface for physical signs, posters,
+  labels, printed numbers, painted lettering, and mechanical reel symbols.
+- Pixel/bitmap fonts are allowed **only for genuinely digital circumstances**
+  where the depicted hardware or reference warrants them (for example, a dot-matrix
+  display or an electronic scoreboard). Low texture resolution, a retro game
+  aesthetic, convenience, or the presence of a machine does not qualify.
+- Rasterize ordinary type smoothly at the working resolution, then apply the same
+  soft downsampling and palette quantization as the rest of the texture. Do not
+  manufacture chunky glyphs or deliberate stair-step edges to suggest age.
 - Do NOT use normal maps, specular/roughness maps, PBR texture sets, photo
   textures pasted raw, or high-resolution detail.
 
@@ -125,6 +137,8 @@ Use the same rig for every asset so assets compare side by side:
 - [ ] Shading is baked into vertex colour with the shared sun; no dynamic lights.
 - [ ] Textures: power-of-two, RGB, no alpha, 32-48 colours, no dither, soft edges.
 - [ ] No stretched or misaligned UVs; tiles land on the real grid.
+- [ ] Physical lettering uses appropriate real typefaces; any bitmap font is
+  restricted to a justified actual digital display, not general signage.
 - [ ] Materials matte except glass/metal; each classified into one of the four classes.
 - [ ] Lit windows muted, not orange; nothing neon.
 - [ ] Previews rendered with the standard rig and visually reviewed.

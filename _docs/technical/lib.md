@@ -16,7 +16,7 @@ Everything runs inside Blender (5.2+) with its bundled Python (`numpy` and `Open
 
 | Module        | What it gives you                                                                                                                                                                            | Style rules it enforces                                                                                                                                                |
 |---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `paint.py`    | `Canvas` (4× supersampled painting: `rect`, `rect_wrap`, `mul`, `text`, `text_c`, `weather`), `tile_noise`, `plain()`, `shade()`, `mix()`, `quantize()`, `save_png()`, `TextureSet` registry | §4: paint at 4× then box-filter, palette-quantize with no dither, RGB with no alpha, power-of-two sizes, correlated weathering, 5×7 bitmap font                        |
+| `paint.py`    | `Canvas` (4× supersampled painting: `rect`, `rect_wrap`, `mul`, `weather`; legacy digital-only `text` / `text_c`), `tile_noise`, `plain()`, `shade()`, `mix()`, `quantize()`, `save_png()`, `TextureSet` registry | §4: paint at 4× then box-filter, palette-quantize with no dither, RGB with no alpha, power-of-two sizes, correlated weathering; bitmap text is restricted to justified digital displays |
 | `shading.py`  | The one shared sun (`SUN`, `SUN_ELEV`), `bake()`, `MaterialTable` with `W()`/`F` UV mappings, `build_materials()`                                                                            | §3: baked vertex light (up 1.0, down 0.6, walls 0.76–1.0, ground ×0.84→1.0 over 2.5 m). §5: texture × `Bake` → Principled; matte unless glass/metal; four classes only |
 | `geometry.py` | `MB` mesh builder (`box`, `quad`, `prism`, `poly`, `build`), `coll()`, `reset_scene()`, `report_tris()`, `save()`                                                                            | §2: flat shading, outward winding, per-face `skip` for hidden faces, world-space metres                                                                                |
 | `rig.py`      | `setup(asset_root, extra_cams, default_cam)`, `render(names, out_dir)`, `viewport_defaults()`                                                                                                | §7: same sun/sky/32 mm/900×600 for everything, 4 cardinal + 3/4 aerial (+ top above 35 m)                                                                              |
@@ -36,6 +36,13 @@ if REPO not in sys.path:
 ```
 
 ### `textures.py`: painters plus the material table
+
+**Do not use the shared 5×7 `Canvas.text` / `Canvas.text_c` for ordinary lettering.**
+They remain available only for genuinely digital displays that require bitmap
+glyphs. Physical signs, posters, labels and printed/mechanical numbers need an
+appropriate real typeface, rasterized at 4× and softened/quantized with the texture.
+Implement such rendering in the asset's `textures.py`; do not modify `_lib` to
+bypass its read-only rule. Low-resolution textures are not an exception.
 
 ```python
 from _lib.paint import Canvas, TextureSet, plain, shade, mix
