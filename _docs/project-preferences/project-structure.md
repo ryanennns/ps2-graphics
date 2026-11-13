@@ -19,6 +19,22 @@ models
 
 models > particular_model > ai_model
 
+# Scenes
+
+Interiors and multi-prop sets go under `./scenes`, with the same per-AI-model layout:
+
+```
+scenes
+--> strip_club
+------> reference.png, prompt.txt
+------> claude-opus-5.5
+----------> previews/ textures/ the four scripts, NOTES.md, usage.json, strip_club.blend
+```
+
+scenes > particular_scene > ai_model. Everything below about scripts, `NOTES.md` and
+`usage.json` applies to scenes too. (`scenes/casino/` predates this layout and has no AI-model
+directory.) See `_docs/technical/lib.md` for interior budgets and cutaway previews.
+
 ## Python files in a model directory
 
 A model directory contains exactly these four Python files and no others:
@@ -60,6 +76,17 @@ usage, not just its last response, using exactly these six fields:
 | `output`       | The session's recorded `tokens.output` counter; do not add the separate reasoning counter.                                                               |
 | `cached_input` | The session's recorded `tokens.cache.read` counter: cached input tokens, not the number of cache-hit requests.                                           |
 | `spend`        | The session's recorded API cost in USD, or the calculated API-equivalent cost for subscription usage (see below), as a number without a currency symbol. |
+
+The shared tool `_lib/usage.py` does the retrieval, the arithmetic below and the JSON for you once
+you have looked up the official rates:
+
+```sh
+python3 _lib/usage.py <sessionID> models/<asset>/<ai_model> --input-rate 2 --output-rate 10 \
+    --cache-read-rate 0.10 [--cache-write-rate 2.5] [--reasoning-included] [--effort high]
+```
+
+It refuses to write a zero/unknown `spend`, and prints the `NOTES.md` block to paste and complete
+with the pricing source URL and lookup date.
 
 For OpenCode, retrieve the creation session with
 `rtk opencode api get /api/session/<sessionID>` and copy its cumulative counters
@@ -103,7 +130,7 @@ backfill `spend` with an API-equivalent calculation from the recorded token usag
    Cache-write and reasoning counts used in the calculation belong in `NOTES.md`,
    not in extra JSON fields.
 4. **Write the calculated USD amount to `spend`.** Keep it numeric and retain the
-   five-field JSON format. Do not leave a zero placeholder when the calculation is
+   six-field JSON format. Do not leave a zero placeholder when the calculation is
    possible. Preserve a genuine recorded API charge rather than replacing it with
    an estimate merely because it differs from today's list prices.
 5. **Document and verify.** In the model's `NOTES.md`, record the session ID, pricing

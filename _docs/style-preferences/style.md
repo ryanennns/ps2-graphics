@@ -85,10 +85,12 @@ or realistic object with true proportions, reduced to few polygons and few colou
 - Give each distinct ornament (cornice, band, door, sign, clock) its own small
   texture, detailed only enough to read at final resolution.
 - **Typography: MUST NOT use or consider pixel/bitmap/Minecraft-style fonts for
-  non-digital lettering.** This includes the shared 5×7 `Canvas.text` / `text_c`
-  helper: it is not a general-purpose signage font. Use a real, era-appropriate
-  serif, sans-serif, script, or sign-painter typeface for physical signs, posters,
-  labels, printed numbers, painted lettering, and mechanical reel symbols.
+  non-digital lettering.** This includes the shared 5×7 `Canvas.led_text` /
+  `led_text_c` helper (legacy names `text` / `text_c`): it is not a general-purpose
+  signage font. Use a real, era-appropriate serif, sans-serif, script, or
+  sign-painter typeface for physical signs, posters, labels, printed numbers,
+  painted lettering, and mechanical reel symbols. The shared `Canvas.type` does
+  this (see `_docs/technical/lib.md`).
 - Pixel/bitmap fonts are allowed **only for genuinely digital circumstances**
   where the depicted hardware or reference warrants them (for example, a dot-matrix
   display or an electronic scoreboard). Low texture resolution, a retro game

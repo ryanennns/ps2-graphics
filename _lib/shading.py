@@ -73,6 +73,33 @@ def W(tw, th, ou=0.0, ov=0.0):
 F = ('f',)  # fit: 0..1 across the face (times a per-face repeat)
 
 
+def P(origin, R, U, w, h):
+    """Planar projection (atlases: vehicle sides, facades): uv = ((p - origin).R / w, (p - origin).U / h).
+    One texture spans w x h metres of the plane through `origin` spanned by unit axes R (u) and U (v).
+    Faces anywhere on/near that plane sample the same atlas, so seams land where the painting puts them."""
+    o, r, u = Vector(origin), Vector(R).normalized(), Vector(U).normalized()
+    return ('p', tuple(o), tuple(r), tuple(u), w, h)
+
+
+def map_uv(mapping, pts, R, U, rep=(1, 1)):
+    """UVs for world points `pts` on a face with in-plane axes R (u) and U (v), per material mapping:
+    'w' world-tiled along the face axes, 'p' planar projection, 'f' fit the face bbox (x rep)."""
+    pts = [Vector(p) for p in pts]
+    R, U = Vector(R), Vector(U)
+    if mapping[0] == 'w':
+        _, tw, th, ou, ov = mapping
+        su, sv = R.x + R.y + R.z, U.x + U.y + U.z
+        return [((p.dot(R) - ou * su) / tw, (p.dot(U) - ov * sv) / th) for p in pts]
+    if mapping[0] == 'p':
+        _, o, r, u, w, h = mapping
+        o, r, u = Vector(o), Vector(r), Vector(u)
+        return [((p - o).dot(r) / w, (p - o).dot(u) / h) for p in pts]
+    us = [p.dot(R) for p in pts]; vs = [p.dot(U) for p in pts]
+    u0, v0 = min(us), min(vs)
+    du, dv = max(max(us) - u0, 1e-9), max(max(vs) - v0, 1e-9)
+    return [((a - u0) / du * rep[0], (b - v0) / dv * rep[1]) for a, b in zip(us, vs)]
+
+
 class MaterialTable(dict):
     """name -> {tex, cls, map}. One entry per material; every material has exactly one class."""
 

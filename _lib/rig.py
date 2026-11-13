@@ -49,8 +49,9 @@ def asset_bounds(asset_root):
     return mn, mx
 
 
-def viewport_defaults():
-    """Material Preview using the scene sun/sky, so opening the .blend matches the previews."""
+def viewport_defaults(camera_view=False):
+    """Material Preview using the scene sun/sky, so opening the .blend matches the previews.
+    camera_view=True also opens every 3D view looking through the scene camera."""
     for scr in bpy.data.screens:
         for area in scr.areas:
             if area.type == 'VIEW_3D':
@@ -61,6 +62,8 @@ def viewport_defaults():
                 sp.clip_end = 1000
                 sp.overlay.show_floor = False
                 sp.overlay.show_extras = False
+                if camera_view and sp.region_3d is not None:
+                    sp.region_3d.view_perspective = 'CAMERA'
 
 
 def setup(asset_root, extra_cams=(), default_cam=None):
@@ -114,13 +117,64 @@ def setup(asset_root, extra_cams=(), default_cam=None):
     return names
 
 
-def render(names, out_dir):
+def render(names, out_dir, hide=None):
+    """Render each camera to out_dir/<name>.png.
+    hide: cutaways for interiors, {camera name or '*': [collection or object names]} hidden from
+    render for that shot only ('*' = every shot without its own entry), e.g.
+    {'*': ['Ceiling'], 'Cam_Interior': []} removes the ceiling for every shot but the interior one.
+    Everything is restored afterwards."""
     os.makedirs(out_dir, exist_ok=True)
     sc = bpy.context.scene
     keep = sc.camera
-    for name in names:
-        sc.camera = bpy.data.objects[name]
-        sc.render.filepath = os.path.join(out_dir, name + ".png")
-        bpy.ops.render.render(write_still=True)
-        print("RENDERED", name)
-    sc.camera = keep
+    hide = hide or {}
+
+    def items(nm):
+        out = []
+        for n in hide.get(nm, hide.get('*', ())):
+            it = bpy.data.collections.get(n) or bpy.data.objects.get(n)
+            if it is None:
+                raise KeyError(f"rig.render hide: no collection/object {n!r}")
+            out.append(it)
+        return out
+    every = {id(i): i for nm in list(hide) for i in items(nm)}.values()
+    state = {id(i): i.hide_render for i in every}
+    try:
+        for name in names:
+            hidden = {id(i) for i in items(name)}
+            for i in every:
+                i.hide_render = state[id(i)] or id(i) in hidden
+            sc.camera = bpy.data.objects[name]
+            sc.render.filepath = os.path.join(out_dir, name + ".png")
+            bpy.ops.render.render(write_still=True)
+            print("RENDERED", name)
+    finally:
+        for i in every:
+            i.hide_render = state[id(i)]
+        sc.camera = keep
+
+
+def contact_sheet(names, out_dir, cols=3, out_name="ReviewSheet.png", scale=0.5):
+    """Tile already-rendered previews (out_dir/<name>.png) into one review image, row-major."""
+    import numpy as np
+    import OpenImageIO as oiio
+    tiles = []
+    for n in names:
+        buf = oiio.ImageBuf(os.path.join(out_dir, n + ".png"))
+        if buf.has_error:
+            raise FileNotFoundError(buf.geterror())
+        spec = buf.spec()
+        w, h = int(spec.width * scale), int(spec.height * scale)
+        tiles.append(np.asarray(oiio.ImageBufAlgo.resize(buf, roi=oiio.ROI(0, w, 0, h, 0, 1, 0, 3)).get_pixels(oiio.UINT8))[..., :3])
+    h, w = tiles[0].shape[:2]
+    rows = (len(tiles) + cols - 1) // cols
+    sheet = np.full((rows * h, cols * w, 3), 255, np.uint8)
+    for k, t in enumerate(tiles):
+        r, c = divmod(k, cols)
+        sheet[r * h:r * h + t.shape[0], c * w:c * w + t.shape[1]] = t[:h, :w]
+    path = os.path.join(out_dir, out_name)
+    out = oiio.ImageOutput.create(path)
+    out.open(path, oiio.ImageSpec(sheet.shape[1], sheet.shape[0], 3, 'uint8'))
+    out.write_image(np.ascontiguousarray(sheet))
+    out.close()
+    print("SHEET", path)
+    return path

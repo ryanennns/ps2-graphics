@@ -9,6 +9,12 @@ dirs; (2) reading the representative implementations; (3) a headless-Blender pas
 `.blend` files measuring style rules `checks.py` does not enforce; (4) two small reproductions of
 suspected `_lib` bugs. Scratch scripts live in `/tmp/libaudit/`, outside the repo.
 
+**Status: implemented** in the follow-up commit on this branch: every P0-P3 item below plus the
+`usage.json` tool, docs and `.gitignore`. Existing asset directories were deliberately left
+untouched (they are the per-AI-model comparison artifacts), so the `boot` / `Canvas.type` / `MB`
+helpers apply to new work. Old scripts keep working unchanged: the API is backward compatible.
+Usage is documented in `lib.md`.
+
 Priority: **P0** = `_lib` bug or correctness hazard. **P1** = re-implemented in many asset dirs.
 **P2** = style rules nobody checks yet. **P3** = scenes/rig/housekeeping.
 
