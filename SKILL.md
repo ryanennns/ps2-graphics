@@ -23,11 +23,21 @@ Paths below are relative to this skill's directory (`SKILL.md`'s folder) unless 
 
 ## 2. Project setup
 
-- If the project root already has a `_lib/`, use it. Otherwise link this skill's copy in:
-  `ln -s <skill dir>/_lib <project>/_lib`. Never copy `_lib`; asset scripts find it by walking up
-  to the directory that contains `_lib/`.
-- **Do not modify `_lib/` unless the user explicitly asks.** It is shared by every asset. If you
-  need something it lacks, write it in the asset's own scripts and tell the user what's missing.
+- Asset scripts import the pipeline from a `_lib/` folder in the project root (they find it by
+  walking up from their own directory), so the project carries its own copy of `_lib`:
+  - **If `<project>/_lib/` already exists, use it as is.** Do not overwrite or update it unless the
+    user asks; existing assets were built against that version.
+  - **Otherwise copy this skill's `_lib` into the project root** (a copy, not a symlink, so the
+    project stays self-contained and rebuilds the same way later), and record where it came from:
+    ```sh
+    rsync -a --exclude __pycache__ "<skill dir>/_lib/" "<project>/_lib/"
+    git -C "<skill dir>" rev-parse --short HEAD > "<project>/_lib/VERSION" 2>/dev/null || date +%F > "<project>/_lib/VERSION"
+    ```
+  - To update a project's `_lib` later (only when asked), re-run the copy, then rebuild and
+    re-validate every asset and report what changed.
+- **Do not modify `_lib/` unless the user explicitly asks.** It is shared by every asset in the
+  project. If you need something it lacks, write it in the asset's own scripts and tell the user
+  what's missing.
 - Blender 5.2+ (`/Applications/Blender.app/Contents/MacOS/Blender` on macOS). Its bundled Python
   has numpy, OpenImageIO, blf and imbuf.
 
