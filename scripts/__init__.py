@@ -1,0 +1,1 @@
+"""Shared asset pipeline for every model in models/<asset>/<ai_model>/ and scenes/<scene>/<ai_model>/. Shipped in the ps2-graphics skill as scripts/ and installed into each project as _lib/. See the skill's documentation/technical/lib.md. Do not modify unless explicitly asked."""

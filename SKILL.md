@@ -10,16 +10,26 @@ description, following the rules below. Target look: early PS2, specifically GTA
 (2004). Lo-poly, grounded, soft and slightly faded. **Simplify reality, don't invent.**
 
 Paths below are relative to this skill's directory (`SKILL.md`'s folder) unless they say "project".
+The skill bundles:
+
+| Folder | Contents | How it's used |
+|--------|----------|---------------|
+| `documentation/` | Style guide (+ look-reference images), `_lib` API, default project conventions | Read by you, from here |
+| `scripts/` | The pipeline code (Python package for Blender) | **Copied into each project as `<project>/_lib/`**; asset scripts import it as `_lib` |
+| `references/` | Subject reference material (photos, drawings, measurements) | Read by you when it covers the subject; may be empty |
 
 ## 1. Read before starting (mandatory)
 
-1. `_docs/style-preferences/style.md` in full, and view the reference images in
-   `_docs/style-preferences/images/`. Its MUSTs are hard requirements. If a rule conflicts with the
+1. `documentation/style-preferences/style.md` in full, and view the reference images in
+   `documentation/style-preferences/images/`. Its MUSTs are hard requirements. If a rule conflicts with the
    user's request, follow the request and report the deviation.
-2. `_docs/technical/lib.md` in full. It is the API for everything below.
-3. The code in `_lib/` (`paint.py`, `shading.py`, `geometry.py`, `rig.py`, `checks.py`, `boot.py`).
-4. If the project has its own conventions (for example `_docs/project-preferences/project-structure.md`,
-   an `AGENTS.md`, or existing `models/` dirs), read them. Project conventions win over the defaults here.
+2. `documentation/technical/lib.md` in full. It is the API for everything below.
+3. The code in `scripts/` (`paint.py`, `shading.py`, `geometry.py`, `rig.py`, `checks.py`, `boot.py`).
+4. Anything in `references/` that covers the subject you're building. It is grounding (real
+   dimensions, colours, details), on the same footing as a reference image from the user.
+5. The project's own conventions, if any: an `AGENTS.md`, its docs folder, existing `models/` dirs.
+   They win over the defaults here. The defaults (asset layout, `NOTES.md`, usage tracking) are
+   spelled out in `documentation/project-preferences/project-structure.md`.
 
 ## 2. Project setup
 
@@ -27,10 +37,11 @@ Paths below are relative to this skill's directory (`SKILL.md`'s folder) unless 
   walking up from their own directory), so the project carries its own copy of `_lib`:
   - **If `<project>/_lib/` already exists, use it as is.** Do not overwrite or update it unless the
     user asks; existing assets were built against that version.
-  - **Otherwise copy this skill's `_lib` into the project root** (a copy, not a symlink, so the
-    project stays self-contained and rebuilds the same way later), and record where it came from:
+  - **Otherwise copy this skill's `scripts/` into the project root as `_lib/`** (a copy, not a
+    symlink, so the project stays self-contained and rebuilds the same way later), and record where
+    it came from:
     ```sh
-    rsync -a --exclude __pycache__ "<skill dir>/_lib/" "<project>/_lib/"
+    rsync -a --exclude __pycache__ "<skill dir>/scripts/" "<project>/_lib/"
     git -C "<skill dir>" rev-parse --short HEAD > "<project>/_lib/VERSION" 2>/dev/null || date +%F > "<project>/_lib/VERSION"
     ```
   - To update a project's `_lib` later (only when asked), re-run the copy, then rebuild and

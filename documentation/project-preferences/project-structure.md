@@ -33,7 +33,7 @@ scenes
 
 scenes > particular_scene > ai_model. Everything below about scripts, `NOTES.md` and
 `usage.json` applies to scenes too. (`scenes/casino/` predates this layout and has no AI-model
-directory.) See `_docs/technical/lib.md` for interior budgets and cutaway previews.
+directory.) See `documentation/technical/lib.md` for interior budgets and cutaway previews.
 
 ## Python files in a model directory
 
@@ -48,7 +48,7 @@ A model directory contains exactly these four Python files and no others:
 
 All model code must fit one of these four roles; no helper modules, scratch scripts or one-off
 debug files. Shared code belongs in the repo-root `_lib/` and is imported from there, not copied.
-Do not modify `_lib/` unless explicitly asked; see `_docs/technical/lib.md`. Notes go in a
+Do not modify `_lib/` unless explicitly asked; see `documentation/technical/lib.md`. Notes go in a
 `NOTES.md` next to the scripts (it's a doc, not code).
 
 ## Usage tracking (`usage.json`)

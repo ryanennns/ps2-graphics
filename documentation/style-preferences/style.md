@@ -90,7 +90,7 @@ or realistic object with true proportions, reduced to few polygons and few colou
   signage font. Use a real, era-appropriate serif, sans-serif, script, or
   sign-painter typeface for physical signs, posters, labels, printed numbers,
   painted lettering, and mechanical reel symbols. The shared `Canvas.type` does
-  this (see `_docs/technical/lib.md`).
+  this (see `documentation/technical/lib.md`).
 - Pixel/bitmap fonts are allowed **only for genuinely digital circumstances**
   where the depicted hardware or reference warrants them (for example, a dot-matrix
   display or an electronic scoreboard). Low texture resolution, a retro game

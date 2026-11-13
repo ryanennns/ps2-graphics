@@ -1,12 +1,17 @@
 # `_lib`: shared asset pipeline
 
+> **Where it lives.** The ps2-graphics skill ships this code in its `scripts/` folder. Each project
+> gets its own copy at `<project>/_lib/` (see the skill's `SKILL.md`, "Project setup"), and asset
+> scripts import it as the `_lib` package. Every `_lib/...` path and `from _lib import ...` below
+> refers to that project copy.
+
 `_lib/` (at the repo root) is the shared Python code that every model uses, whatever agent or model
-family made it. It implements the mechanical parts of `_docs/style-preferences/style.md`, so every
+family made it. It implements the mechanical parts of `documentation/style-preferences/style.md`, so every
 asset gets the same sun, shader, texture processing, lettering, preview rig and self-check.
 
 > **Agents must not modify anything in `_lib/` unless the user explicitly asks them to.**
 > Treat it as read-only. If your model needs something `_lib` doesn't provide, write it in your
-> model's own scripts (see `_docs/project-preferences/project-structure.md`). If you think `_lib`
+> model's own scripts (see `documentation/project-preferences/project-structure.md`). If you think `_lib`
 > has a bug or a missing feature, say so to the user and don't change it yourself. Changing `_lib`
 > changes every model in the repo, including other agents' models.
 
