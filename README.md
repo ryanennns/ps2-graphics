@@ -86,8 +86,9 @@ The agent reads the style guide and the pipeline API, then:
    project is self-contained and rebuilds the same way later;
 2. grounds the subject's real dimensions and colours, from your reference image, `references/`, or
    documented facts (any guesses are labelled as guesses);
-3. writes `models/cat/<ai_model>/` with `textures.py`, `build.py`, `render_previews.py` and
-   `validate.py`;
+3. writes `models/cat/` with `textures.py`, `build.py`, `render_previews.py` and `validate.py`.
+   That's the default; if your repo says where models go (in `AGENTS.md`, `CLAUDE.md`, its docs, or
+   the layout of existing assets), the agent uses that instead;
 4. builds headless, validates, renders the previews, reviews them against the reference, and
    iterates;
 5. writes `NOTES.md` (grounding, triangle count, deviations) next to `cat.blend`.
@@ -98,9 +99,9 @@ To run the scripts yourself:
 
 ```sh
 B=/Applications/Blender.app/Contents/MacOS/Blender
-$B -b --python models/cat/<ai_model>/build.py
-$B -b models/cat/<ai_model>/cat.blend --python models/cat/<ai_model>/validate.py
-$B -b models/cat/<ai_model>/cat.blend --python models/cat/<ai_model>/render_previews.py
+$B -b --python models/cat/build.py
+$B -b models/cat/cat.blend --python models/cat/validate.py
+$B -b models/cat/cat.blend --python models/cat/render_previews.py
 ```
 
 ## Documentation

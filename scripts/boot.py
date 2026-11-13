@@ -1,4 +1,4 @@
-"""Script bootstrap for asset scripts (models/<asset>/<family>/, scenes/<scene>/[<family>/]).
+"""Script bootstrap for asset scripts (models/<asset>/, scenes/<scene>/, or any project-specific depth).
 
 Use these instead of hand-written sys.path boilerplate (works at any directory depth):
 

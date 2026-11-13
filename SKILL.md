@@ -27,9 +27,9 @@ The skill bundles:
 3. The code in `scripts/` (`paint.py`, `shading.py`, `geometry.py`, `rig.py`, `checks.py`, `boot.py`).
 4. Anything in `references/` that covers the subject you're building. It is grounding (real
    dimensions, colours, details), on the same footing as a reference image from the user.
-5. The project's own conventions, if any: an `AGENTS.md`, its docs folder, existing `models/` dirs.
-   They win over the defaults here. The defaults (asset layout, `NOTES.md`, usage tracking) are
-   spelled out in `documentation/project-preferences/project-structure.md`.
+5. The project's own conventions, if any (see section 3 for where to look). They win over the
+   defaults here. The defaults (asset layout, `NOTES.md`, usage tracking) are spelled out in
+   `documentation/project-preferences/project-structure.md`.
 
 ## 2. Project setup
 
@@ -54,10 +54,26 @@ The skill bundles:
 
 ## 3. Asset layout
 
-Default (unless the project says otherwise):
-`models/<asset>/<ai_model>/` for props, vehicles and buildings, and `scenes/<scene>/<ai_model>/` for
-interiors and sets. `<ai_model>` is your own model name, e.g. `claude-opus-5.5`. Each holds exactly
-four scripts plus outputs:
+**Where the asset goes.** Decide this before writing anything, in this order:
+
+1. **The project defines it: follow the project.** Look in the project's agent/contributor
+   instructions (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `CONTRIBUTING.md`, `README.md`), its docs
+   folder (e.g. `docs/`, `_docs/`, a `project-structure.md`), and the layout of the assets it
+   already has. Whatever it specifies (another root such as `assets/3d/`, extra levels such as a
+   per-AI-model folder `models/<asset>/<ai_model>/`, naming rules) overrides the default below,
+   and so do its rules for notes, usage files and commits.
+2. **Otherwise, use the default:** one folder per asset, named after the asset in lowercase
+   `snake_case`:
+   - `models/<asset>/` for props, vehicles, buildings, foliage and characters, e.g. `models/cat/`;
+   - `scenes/<scene>/` for interiors and multi-prop sets, e.g. `scenes/diner/`.
+3. **Unclear or conflicting** (e.g. the instructions and the existing folders disagree): ask the
+   user rather than guess.
+
+If the folder already exists, you are editing that asset: work in it, don't create a sibling.
+State the folder you chose (and why, if a project rule decided it) at the start of your work and
+in `NOTES.md`.
+
+Each asset folder holds exactly four scripts plus outputs:
 
 | File | Role |
 |------|------|
@@ -85,7 +101,7 @@ Start every script with the `boot` bootstrap from `lib.md`, and load siblings wi
 4. **Geometry** (`build.py`). World-space metres. `MB.box`/`face`/`extrude`/`loft`/`tube`/`cylinder`,
    with `skip=` on faces that can never be seen. `smooth=True` only for organic forms. Never rotate
    or scale objects (the bake reads world-space mesh data); place parts with `mark()`/`transform()`.
-5. **Build, validate, render** headless:
+5. **Build, validate, render** headless (`<dir>` is the asset folder chosen in section 3):
    ```sh
    B=/Applications/Blender.app/Contents/MacOS/Blender
    $B -b --factory-startup --python <dir>/build.py
@@ -98,8 +114,9 @@ Start every script with the `boot` bootstrap from `lib.md`, and load siblings wi
    warnings as review items: fix them or justify them in `NOTES.md`.
 7. **Finish.** Run style.md §8's self-check. Write `NOTES.md` with the triangle count, grounding,
    guesses and deviations. If the project tracks usage, write `usage.json` with
-   `python3 _lib/usage.py <sessionID> <asset dir> --input-rate … --output-rate … --cache-read-rate …`
-   using officially looked-up rates (never invent prices). Commit per the project's convention.
+   `python3 _lib/usage.py <sessionID> <dir> --model <your model name> --input-rate … --output-rate … --cache-read-rate …`
+   using officially looked-up rates (never invent prices). Commit per the project's convention; if
+   it has none, only commit when the user asks.
 
 ### Using the live Blender MCP session
 

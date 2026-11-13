@@ -1,39 +1,47 @@
+# Default project structure
+
+These are the defaults the ps2-graphics skill uses in a project that doesn't define its own. **If
+the project says where assets go or how they're organised (in its `AGENTS.md`, `CLAUDE.md`,
+`README.md`, `CONTRIBUTING.md`, docs folder, or the layout of the assets it already has), the
+project's rules override everything on this page.** If the project's signals disagree, ask the user.
+
 # Models
 
-When creating a new model, it must go under the ./models directory, and furthermore under the model family directory
-to which you, the agent, belong to.
-
-For instance, if I was Opus 5.5 designing a truck model, I would save my output as follows:
+Each new model gets its own folder under `./models`, named after the asset in lowercase
+`snake_case`. For instance, a truck model:
 
 ```
 models
 --> truck
-------> claude-opus-5.5
-----------> previews
---------------> asdf.png
-----------> textures
---------------> xyz.png
-----------> all_python_scripts_here.py
-----------> truck.blend
+------> previews/
+--------------> Cam_Aerial34.png ...
+------> textures/
+--------------> paint.png ...
+------> textures.py, build.py, render_previews.py, validate.py
+------> NOTES.md
+------> truck.blend
 ```
 
-models > particular_model > ai_model
+models > particular_model. Editing an existing model means working in its existing folder.
+
+A project may add levels or use another root. For example, a repo that compares several AI models
+on the same subjects puts each attempt in a per-AI-model folder, `models/<asset>/<ai_model>/`
+(`models/truck/claude-opus-5.5/`). Follow such a rule when the project states it; it is not the
+default.
 
 # Scenes
 
-Interiors and multi-prop sets go under `./scenes`, with the same per-AI-model layout:
+Interiors and multi-prop sets go under `./scenes`, one folder per scene, with the same contents:
 
 ```
 scenes
 --> strip_club
-------> reference.png, prompt.txt
-------> claude-opus-5.5
-----------> previews/ textures/ the four scripts, NOTES.md, usage.json, strip_club.blend
+------> reference.png   (optional: the user's reference)
+------> previews/ textures/ the four scripts, NOTES.md, strip_club.blend
 ```
 
-scenes > particular_scene > ai_model. Everything below about scripts, `NOTES.md` and
-`usage.json` applies to scenes too. (`scenes/casino/` predates this layout and has no AI-model
-directory.) See `documentation/technical/lib.md` for interior budgets and cutaway previews.
+scenes > particular_scene. Everything below about scripts, `NOTES.md` and `usage.json` applies to
+scenes too. See `documentation/technical/lib.md` for interior budgets and cutaway previews.
 
 ## Python files in a model directory
 
@@ -53,8 +61,8 @@ Do not modify `_lib/` unless explicitly asked; see `documentation/technical/lib.
 
 ## Usage tracking (`usage.json`)
 
-Save `usage.json` alongside the model's `.blend`, scripts and `NOTES.md` at
-`models/<asset>/<ai_model>/usage.json`. Record the creation session's cumulative
+Only if the project tracks usage. Save `usage.json` in the asset's folder, alongside its `.blend`,
+scripts and `NOTES.md` (by default `models/<asset>/usage.json`). Record the creation session's cumulative
 usage, not just its last response, using exactly these six fields:
 
 ```json
@@ -70,7 +78,7 @@ usage, not just its last response, using exactly these six fields:
 
 | Field          | What to put there                                                                                                                                        |
 |----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `model`        | AI model name matching the model directory name, not the asset name.                                                                                     |
+| `model`        | Name of the AI model that created the asset (e.g. `claude-opus-5.5`), not the asset name. In a per-AI-model layout it matches that folder's name.         |
 | `effort`       | The effort setting applied when running the task.                                                                                                        |
 | `input`        | The session's recorded `tokens.input` counter.                                                                                                           |
 | `output`       | The session's recorded `tokens.output` counter; do not add the separate reasoning counter.                                                               |
@@ -81,7 +89,7 @@ The shared tool `_lib/usage.py` does the retrieval, the arithmetic below and the
 you have looked up the official rates:
 
 ```sh
-python3 _lib/usage.py <sessionID> models/<asset>/<ai_model> --input-rate 2 --output-rate 10 \
+python3 _lib/usage.py <sessionID> models/<asset> --model <ai_model> --input-rate 2 --output-rate 10 \
     --cache-read-rate 0.10 [--cache-write-rate 2.5] [--reasoning-included] [--effort high]
 ```
 
@@ -144,4 +152,7 @@ a price. Leave an existing recorded zero unchanged, explicitly mark it as
 unresolved in `NOTES.md`, and report the blocker. If there is no recorded cost at
 all, leave `usage.json` absent until it can be calculated; unknown is not zero.
 
-When done with your model, commit your work as `${modelName}_${assetName}`
+## Committing
+
+Follow the project's commit convention. If it has none, don't commit unless the user asks; when
+asked, use the message `${modelName}_${assetName}` (e.g. `claude-opus-5.5_truck`).

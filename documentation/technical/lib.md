@@ -34,8 +34,9 @@ Everything runs inside Blender (5.2+) with its bundled Python (`numpy`, `OpenIma
 ## How a model uses it
 
 Each script gets `_lib` importable, then lets `boot` do the rest. `boot.find_repo` walks up to the
-directory containing `_lib/`, so the same lines work in `models/<asset>/<family>/`,
-`scenes/<scene>/<family>/` or anywhere else:
+directory containing `_lib/`, so the same lines work in `models/<asset>/` (the default),
+`scenes/<scene>/`, a deeper project-specific layout such as `models/<asset>/<ai_model>/`, or anywhere
+else:
 
 ```python
 import os, sys
@@ -57,7 +58,7 @@ render_previews = boot.local(__file__, "render_previews")
 ```
 
 To run an asset script inside a live Blender session (MCP `execute_blender_code`), use
-`from _lib import boot; boot.run("/abs/path/models/<asset>/<family>/build.py")`. It purges stale
+`from _lib import boot; boot.run("/abs/path/models/<asset>/build.py")`. It purges stale
 sibling modules first, which makes older scripts that still use plain imports safe too.
 
 ### `textures.py`: painters plus the material table
@@ -208,12 +209,12 @@ cap the whole scene with `total_max`.
 
 ```sh
 B=/Applications/Blender.app/Contents/MacOS/Blender
-$B -b --python models/<asset>/<family>/build.py
-$B -b models/<asset>/<family>/<asset>.blend --python models/<asset>/<family>/validate.py
-$B -b models/<asset>/<family>/<asset>.blend --python models/<asset>/<family>/render_previews.py [-- Cam_Name ...]
-$B models/<asset>/<family>/<asset>.blend --python _lib/view.py -- Cam_A Cam_B      # GUI viewer
-python3 _lib/usage.py <sessionID> models/<asset>/<family> --input-rate … --output-rate … --cache-read-rate …
+$B -b --python models/<asset>/build.py
+$B -b models/<asset>/<asset>.blend --python models/<asset>/validate.py
+$B -b models/<asset>/<asset>.blend --python models/<asset>/render_previews.py [-- Cam_Name ...]
+$B models/<asset>/<asset>.blend --python _lib/view.py -- Cam_A Cam_B      # GUI viewer
+python3 _lib/usage.py <sessionID> models/<asset> --model <ai_model> --input-rate … --output-rate … --cache-read-rate …
 ```
 
-Reference implementation: `models/gas_station/claude/`. It predates `boot`, `Canvas.type` and the
-new `MB` methods; prefer the patterns on this page for new work.
+Paths above use the default layout, `models/<asset>/`. Substitute the project's own asset folder
+if it defines one.

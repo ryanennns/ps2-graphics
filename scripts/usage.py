@@ -4,7 +4,7 @@ Plain Python (no Blender). Prices are NEVER guessed: look up the exact model's c
 pricing (per million tokens) and pass it in. Without rates, a recorded non-zero session cost is used;
 with neither, nothing is written (unknown is not zero).
 
-    python3 _lib/usage.py ses_XXXX models/<asset>/<family> --model gpt-6.1-sol \
+    python3 _lib/usage.py ses_XXXX models/<asset> --model gpt-6.1-sol \
         --input-rate 2 --output-rate 10 --cache-read-rate 0.10 [--cache-write-rate 2.5] \
         [--reasoning-included] [--effort high] [--dry-run]
 
@@ -58,8 +58,9 @@ def compute(sess, rates=None, reasoning_included=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("session", help="OpenCode session ID or saved session JSON")
-    ap.add_argument("asset_dir", help="models/<asset>/<family> (usage.json is written there)")
-    ap.add_argument("--model", help="AI model name = the family directory name (default: dir name)")
+    ap.add_argument("asset_dir", help="the asset folder, e.g. models/<asset> (usage.json is written there)")
+    ap.add_argument("--model", required=True,
+                    help="name of the AI model that created the asset, e.g. claude-opus-5.5 (session IDs like 'opus' are not exact)")
     ap.add_argument("--effort", help="effort setting (default: the session's model variant)")
     ap.add_argument("--input-rate", type=float)
     ap.add_argument("--output-rate", type=float)
@@ -78,7 +79,7 @@ def main(argv=None):
                                                cache_read=a.cache_read_rate, cache_write=a.cache_write_rate)
     r = compute(sess, rates, a.reasoning_included)
     effort = a.effort or (sess.get("model") or {}).get("variant")
-    model = a.model or os.path.basename(os.path.normpath(a.asset_dir))
+    model = a.model
     out = dict(model=model, effort=effort, input=r["input"], output=r["output"],
                cached_input=r["cache_read"], spend=r["spend"])
     if effort is None:
